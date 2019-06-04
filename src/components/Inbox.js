@@ -15,14 +15,9 @@ class Inbox extends Component {
   };
   onSelectedArrayChanged = (action, message) => {
     if (action) {
-      this.setState(
-        {
-          messagesSelectedArray: [...this.state.messagesSelectedArray, message]
-        },
-        () => {
-          console.log({ messages: this.state.messagesSelectedArray });
-        }
-      );
+      this.setState({
+        messagesSelectedArray: [...this.state.messagesSelectedArray, message]
+      });
     } else {
       const fillteredArray = this.state.messagesSelectedArray.filter(m => {
         return m.id !== message.id;
@@ -84,21 +79,15 @@ class Inbox extends Component {
     if (!this.state.messagesSelectedArray.length) {
       return;
     } else {
-      this.state.messagesSelectedArray.forEach(message => {
-        messagesStore.getMessagesArray.find(m => m.id === message.id).deleted =
-          "true";
-      });
-      this.fillteredMessages();
-      this.setState({ messagesSelectedArray: [] });
+      messagesStore.deleteMessages(this.state.messagesSelectedArray);
     }
+    this.fillteredMessages();
+    this.setState({ messagesSelectedArray: [] });
   };
 
   render() {
     const unReadMessages = messagesStore.getUnReadMessages;
     const unReadText = unReadMessages ? `(${unReadMessages})` : "";
-    const message = get(messagesStore.getCurrentUser, "messages[0]")
-      ? messagesStore.getCurrentUser.messages[0]
-      : null;
     return (
       <div className="main-inbox-container">
         <div className="header-mail-box">

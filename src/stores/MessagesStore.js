@@ -5,15 +5,15 @@ const db = require("../db.json");
 
 export default class MessagesStore {
   constructor() {
+    this.setMessageArray(this.getCurrentUser.messages);
     let unReadMessages = 0;
-    if (get(this.currentUser, "messages.length") > 0) {
-      this.currentUser.messages.forEach(message => {
-        if (!message.isRead) {
-          unReadMessages += 1;
-        }
-      });
-      this.setUnReadMessages(unReadMessages);
-    }
+
+    this.getMessagesArray.forEach(message => {
+      if (!message.isRead) {
+        unReadMessages += 1;
+      }
+    });
+    this.setUnReadMessages(unReadMessages);
   }
 
   @observable
@@ -24,6 +24,51 @@ export default class MessagesStore {
   @observable
   messagesArray = observable([]);
 
+  // @action
+  // deleteMessages = messagesToDelete => {
+  //   let unReadMessageAreDeleted = 0;
+  //   this.messagesArray.forEach(message => {
+  //     console.log(message);
+  //     if (!message.isRead) {
+  //       unReadMessageAreDeleted += 1;
+  //       console.log({ unReadMessageAreDeleted });
+  //       debugger;
+  //     }
+  //     this.getMessagesArray.find(m => {
+  //       const found = m.id === message.id.deleted;
+  //       if (found) {
+  //         found.deleted = "true";
+  //       }
+  //     });
+  //   });
+  //   this.setUnReadMessages(this.getUnReadMessages - unReadMessageAreDeleted);
+  // };
+  @action
+  deleteMessages = messagesToDelete => {
+    let unReadMessages = 0;
+    let unDeletedMessagesArray = [];
+    messagesToDelete.forEach(messageToDelete => {
+      if (!messageToDelete.isRead) {
+        debugger;
+        unReadMessages += 1;
+      }
+      this.getMessagesArray.forEach(message => {
+        if (
+          message.id != messageToDelete.id &&
+          !unDeletedMessagesArray.includes(message)
+        ) {
+          unDeletedMessagesArray.push(message);
+        } else if (
+          message.id === messageToDelete.id &&
+          !unDeletedMessagesArray.includes(message)
+        ) {
+          message.deleted = true;
+        }
+      });
+    });
+    this.setMessageArray(unDeletedMessagesArray);
+    this.setUnReadMessages(this.getUnReadMessages - unReadMessages);
+  };
   @action
   setCurrentUser = user => {
     this.currentUser = user;
@@ -32,7 +77,7 @@ export default class MessagesStore {
 
   @action
   setMessageArray = messages => {
-    this.messagesArray = messages;
+    this.messagesArray.replace(messages);
   };
 
   @action
@@ -51,7 +96,11 @@ export default class MessagesStore {
   };
   @computed
   get getMessagesArray() {
-    return this.currentUser ? toJS(this.currentUser.messages) : [];
+    const messagesNotDeleted = this.currentUser
+      ? this.currentUser.messages.filter(message => !message.deleted)
+      : [];
+    return messagesNotDeleted;
+    // return this.currentUser ? toJS(this.currentUser.messages) : [];
   }
 
   @computed
