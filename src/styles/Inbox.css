@@ -1,0 +1,21 @@
+.header-mail-box {
+  display: flex;
+  padding: 30px 0px;
+}
+.seperator {
+  border: 0.3px solid black;
+}
+.left-container {
+  flex: 1;
+}
+.right-container {
+  flex: inherit;
+  padding-top: 40px;
+}
+
+.btn-inbox {
+  margin-right: 5px;
+}
+.messages-container {
+  border: 0.5px solid;
+}

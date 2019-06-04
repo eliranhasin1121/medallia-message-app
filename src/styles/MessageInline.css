@@ -1,0 +1,48 @@
+.message-inline-container {
+  display: flex;
+  height: 45px;
+  border-top: 0.5px solid black;
+  background: rgba(255, 255, 255, 0.902);
+  cursor: pointer;
+}
+.unread {
+  background: rgba(242, 245, 245, 0.8);
+}
+.selected {
+  background: #c2dbff;
+}
+.details-container {
+  display: flex;
+  width: 100%;
+  padding-top: 7px;
+}
+.check-box-container {
+  flex: 1;
+  padding-left: 7px;
+}
+.name {
+  flex: 2.5;
+}
+.message-content {
+  flex: 4;
+}
+.date-container {
+  flex: 1.5;
+}
+.date-text {
+  padding-left: 40px;
+}
+
+.message-container-overflow {
+  width: 300px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.check-box {
+  flex: 1;
+}
+.other-details-container {
+  display: flex;
+  flex: 6;
+}
