@@ -12,7 +12,8 @@ class Inbox extends Component {
   state = {
     messagesSelectedArray: [],
     visable: true,
-    page: 1
+    page: 1,
+    clearSelectedMessages: false
   };
   onSelectedArrayChanged = (action, message) => {
     if (action) {
@@ -23,9 +24,7 @@ class Inbox extends Component {
       const fillteredArray = this.state.messagesSelectedArray.filter(m => {
         return m.id !== message.id;
       });
-      this.setState({ messagesSelectedArray: fillteredArray }, () => {
-        console.log({ messages: this.state.messagesSelectedArray });
-      });
+      this.setState({ messagesSelectedArray: fillteredArray });
     }
   };
 
@@ -53,11 +52,22 @@ class Inbox extends Component {
     messagesStore.setMessageAsRead(message);
   };
 
+  resetSelectedValue = () => {
+    this.setState({ clearSelectedMessages: false });
+  };
+
+  setMessagesAsRead = messagesAsReadArray => {
+    messagesStore.setMessagesAsRead(messagesAsReadArray);
+    this.setState({ clearSelectedMessages: true });
+  };
+
   renderAllMessages = () => {
     {
       const messagesArray = this.fillteredMessages();
       return messagesArray.map((message, index) => (
         <MessageInline
+          changeSelectedMessageValue={() => this.resetSelectedValue()}
+          clearSelectedMessages={this.state.clearSelectedMessages}
           key={index}
           setMessageAsRead={message => this.setMessageAsRead(message)}
           message={message}
@@ -103,6 +113,11 @@ class Inbox extends Component {
     return messagesBulk;
   };
 
+  onMarkMessagesClicked = () => {
+    this.setMessagesAsRead(this.state.messagesSelectedArray);
+    this.setState({ clearSelectedMessages: true });
+  };
+
   render() {
     const unReadMessages = messagesStore.getUnReadMessages;
     const unReadText = unReadMessages ? `(${unReadMessages})` : "";
@@ -127,11 +142,8 @@ class Inbox extends Component {
                   <Icon type="read" />
                 )}
               </Button>
-              <Button
-                onClick={() => this.onDeleteClicked()}
-                className="btn-inbox"
-              >
-                <Icon type="delete" />
+              <Button onClick={() => this.onMarkMessagesClicked()}>
+                <Icon type="highlight" />
               </Button>
             </div>
           </div>

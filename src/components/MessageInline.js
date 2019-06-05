@@ -7,6 +7,13 @@ export default class MessageInline extends Component {
     messageSelected: false
   };
 
+  componentDidUpdate(prevProps) {
+    if (prevProps.clearSelectedMessages !== this.props.clearSelectedMessages) {
+      this.props.changeSelectedMessageValue();
+      this.setState({ messageSelected: false });
+    }
+  }
+
   onCheckBoxChanged = e => {
     e.preventDefault();
     const checked = e.target.checked;
@@ -20,12 +27,23 @@ export default class MessageInline extends Component {
     this.props.history.replace(`/message/${message.id}`);
   };
 
+  clearCheckBox = () => {
+    this.setState({ messageSelected: false });
+  };
+
+  clearData = () => {
+    this.setState({ messageSelected: false });
+  };
+
   render() {
     const { message } = this.props;
     const unReadMessageBehavior = !message.isRead ? "unread" : "";
     const selectedMessageBehavior = this.state.messageSelected
       ? "selected"
       : "";
+
+    const value =
+      !this.props.clearSelectedMessages && this.state.messageSelected;
     return (
       <div
         className={`message-inline-container ${unReadMessageBehavior} ${selectedMessageBehavior}`}
@@ -33,7 +51,10 @@ export default class MessageInline extends Component {
         <div className="details-container">
           <span className="check-box">
             <div className="check-box-container">
-              <Checkbox onChange={e => this.onCheckBoxChanged(e)} />
+              <Checkbox
+                checked={value}
+                onChange={e => this.onCheckBoxChanged(e)}
+              />
             </div>
           </span>
           <span
