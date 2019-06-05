@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import { observer } from "mobx-react";
 import rootStores from "../../stores";
 import MessagesStore from "../../stores/MessagesStore";
-import { Icon, Button } from "antd";
+import { Icon, Button, Tooltip } from "antd";
 
 const messageStore = rootStores[MessagesStore];
 @observer
@@ -33,23 +33,29 @@ class MessagePage extends Component {
             <span className="small-text">to me</span>
           </div>
           <div className="element-container">
-            <Button
-              onClick={() => this.onPrintMessageClick()}
-              className="small-btn"
-            >
-              <Icon type="printer" />
-            </Button>
-            <Button
-              onClick={() => this.onOpenNewTabWithMessage()}
-              className="small-btn"
-            >
-              <Icon type="switcher" />
-            </Button>
+            <Tooltip placement="top" title={"Print Message"}>
+              <Button
+                onClick={() => this.onPrintMessageClick()}
+                className="small-btn"
+              >
+                <Icon type="printer" />
+              </Button>
+            </Tooltip>
+            <Tooltip placement="top" title={"Open message in new Tab"}>
+              <Button
+                onClick={() => this.onOpenNewTabWithMessage()}
+                className="small-btn"
+              >
+                <Icon type="switcher" />
+              </Button>
+            </Tooltip>
           </div>
         </div>
         <div className="content-message-container">
           <div className="text-container">
-            <span>{message ? message.content : ""}</span>
+            <span className="content-text-message">
+              {message ? message.content : ""}
+            </span>
           </div>
         </div>
       </div>
