@@ -15,8 +15,8 @@ class Inbox extends Component {
     page: 1,
     clearSelectedMessages: false
   };
-  onSelectedArrayChanged = (action, selectedMessage) => {
-    if (action) {
+  onSelectedArrayChanged = (addedAction, selectedMessage) => {
+    if (addedAction) {
       this.setState({
         messagesSelectedArray: [
           ...this.state.messagesSelectedArray,
@@ -37,7 +37,7 @@ class Inbox extends Component {
     this.setState({ visable: !this.state.visable });
   };
 
-  fillteredMessages = () => {
+  filterdMessages = () => {
     let bulkMessages = this.laodBulkMessagesByPage();
     let filteredMessages;
     if (messagesStore.getMessagesArray) {
@@ -58,45 +58,37 @@ class Inbox extends Component {
   };
 
   resetSelectedValue = () => {
-    this.setState({ clearSelectedMessages: false });
+    this.changedClearSelectedMessages(false);
+  };
+
+  changedClearSelectedMessages = bool => {
+    this.setState({ clearSelectedMessages: bool });
   };
 
   setMessagesAsRead = messagesAsReadArray => {
     messagesStore.setMessagesAsRead(messagesAsReadArray);
-    this.setState({ clearSelectedMessages: true });
+    this.changedClearSelectedMessages(true);
   };
 
   renderAllMessages = () => {
-    {
-      const messagesArray = this.fillteredMessages();
-      return messagesArray.map((message, index) => (
-        <MessageInline
-          changeSelectedMessageValue={() => this.resetSelectedValue()}
-          clearSelectedMessages={this.state.clearSelectedMessages}
-          key={index}
-          setMessageAsRead={message => this.setMessageAsRead(message)}
-          message={message}
-          history={this.props.history}
-          onSelectedArrayChanged={(action, message) =>
-            this.onSelectedArrayChanged(action, message)
-          }
-        />
-      ));
-    }
+    const messagesArray = this.filterdMessages();
+    return messagesArray.map((message, index) => (
+      <MessageInline
+        changeSelectedMessageValue={() => this.resetSelectedValue()}
+        clearSelectedMessages={this.state.clearSelectedMessages}
+        key={index}
+        setMessageAsRead={message => this.setMessageAsRead(message)}
+        message={message}
+        history={this.props.history}
+        onSelectedArrayChanged={(action, message) =>
+          this.onSelectedArrayChanged(action, message)
+        }
+      />
+    ));
   };
 
   refreshPage = () => {
     window.location.reload();
-  };
-
-  onDeleteClicked = () => {
-    if (!this.state.messagesSelectedArray.length) {
-      return;
-    } else {
-      messagesStore.deleteMessages(this.state.messagesSelectedArray);
-    }
-    this.fillteredMessages();
-    this.setState({ messagesSelectedArray: [] });
   };
 
   onPageChanged = page => {
@@ -106,9 +98,9 @@ class Inbox extends Component {
   laodBulkMessagesByPage = () => {
     const pageSize = 20;
     const { page } = this.state;
-    let messagesBulk = [];
-    let start = (page - 1) * pageSize;
-    let end = page * pageSize;
+    const messagesBulk = [];
+    const start = (page - 1) * pageSize;
+    const end = page * pageSize;
     for (
       let i = start;
       i < end && i < messagesStore.getMessagesArray.length;
@@ -121,7 +113,7 @@ class Inbox extends Component {
 
   onMarkMessagesClicked = () => {
     this.setMessagesAsRead(this.state.messagesSelectedArray);
-    this.setState({ clearSelectedMessages: true });
+    this.changedClearSelectedMessages(true);
   };
 
   render() {

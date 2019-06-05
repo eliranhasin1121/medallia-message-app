@@ -6,7 +6,7 @@ import { withRouter } from "react-router";
 import rootStores from "../../stores";
 import { observer } from "mobx-react";
 import Inbox from "../Inbox";
-import MessagePage from "./MessagePage";
+import MessagePage from "../MessagePage";
 const { Header, Footer, Content } = Layout;
 const medalliaLogo = require("../../assets/medallia-logo.png");
 const db = require("../../db.json");

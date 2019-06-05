@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { observer } from "mobx-react";
-import rootStores from "../../stores";
-import MessagesStore from "../../stores/MessagesStore";
+import rootStores from "../stores";
+import MessagesStore from "../stores/MessagesStore";
 import { Icon, Button, Tooltip } from "antd";
 
 const messageStore = rootStores[MessagesStore];

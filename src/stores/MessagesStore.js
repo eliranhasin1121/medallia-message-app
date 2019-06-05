@@ -1,6 +1,5 @@
 import { observable, action, computed, toJS } from "mobx";
 import get from "lodash/get";
-import { array } from "prop-types";
 
 const db = require("../db.json");
 
@@ -25,50 +24,6 @@ export default class MessagesStore {
   @observable
   messagesArray = observable([]);
 
-  @action
-  deleteMessages = messagesToDelete => {
-    let unReadMessages = 0;
-    let unDeletedMessagesArray = [];
-    this.getMessagesArray.forEach(message => {
-      if (!messagesToDelete.includes(message)) {
-        unDeletedMessagesArray.push(message);
-      }
-    });
-    messagesToDelete.forEach(messageToDelete => {
-      if (!messageToDelete.isRead) {
-        unReadMessages += 1;
-      }
-    });
-    this.setMessageArray(unDeletedMessagesArray);
-
-    // messagesToDelete.forEach(messageToDelete => {
-    //   if (!messageToDelete.isRead) {
-    //     unReadMessages += 1;
-    //   }
-    // if (this.getMessagesArray.includes(messageToDelete)) {
-    //   this.getMessagesArray.remove(messageToDelete);
-    // }
-    // let index = this.getMessagesArray.indexOf(messagesToDelete);
-    // if (index > -1) {
-    //   this.getMessagesArray.splice(index, 1);
-    // }
-    //   this.getMessagesArray.forEach(message => {
-    //     if (
-    //       message.id != messageToDelete.id &&
-    //       !unDeletedMessagesArray.includes(message)
-    //     ) {
-    //       unDeletedMessagesArray.push(message);
-    //     } else if (
-    //       message.id === messageToDelete.id &&
-    //       !unDeletedMessagesArray.includes(message)
-    //     ) {
-    //       message.deleted = true;
-    //     }
-    //   });
-    // });
-    // this.setMessageArray(unDeletedMessagesArray);
-    this.setUnReadMessages(this.getUnReadMessages - unReadMessages);
-  };
   @action
   setCurrentUser = user => {
     this.currentUser = user;
@@ -106,7 +61,6 @@ export default class MessagesStore {
       ? this.currentUser.messages.filter(message => !message.deleted)
       : [];
     return messagesNotDeleted;
-    // return this.currentUser ? toJS(this.currentUser.messages) : [];
   }
 
   @computed

@@ -10,15 +10,15 @@ export default class MessageInline extends Component {
   componentDidUpdate(prevProps) {
     if (prevProps.clearSelectedMessages !== this.props.clearSelectedMessages) {
       this.props.changeSelectedMessageValue();
-      this.setState({ messageSelected: false });
+      this.handleMessageSelected(false);
     }
   }
 
   onCheckBoxChanged = e => {
     e.preventDefault();
-    const checked = e.target.checked;
-    this.setState({ messageSelected: checked });
-    this.props.onSelectedArrayChanged(checked, this.props.message);
+    const addedAction = e.target.checked;
+    this.handleMessageSelected(addedAction);
+    this.props.onSelectedArrayChanged(addedAction, this.props.message);
   };
 
   onMessageClicked = () => {
@@ -28,11 +28,15 @@ export default class MessageInline extends Component {
   };
 
   clearCheckBox = () => {
-    this.setState({ messageSelected: false });
+    this.handleMessageSelected(false);
   };
 
   clearData = () => {
-    this.setState({ messageSelected: false });
+    this.handleMessageSelected(false);
+  };
+
+  handleMessageSelected = bool => {
+    this.setState({ messageSelected: bool });
   };
 
   render() {
