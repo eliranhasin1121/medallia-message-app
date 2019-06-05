@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import { observer } from "mobx-react";
 import rootStores from "../stores";
 import MessagesStore from "../stores/MessagesStore";
-import { Button, Icon, Pagination } from "antd";
+import { Button, Icon, Pagination, Tooltip } from "antd";
 import MessageInline from "./MessageInline";
 import get from "lodash/get";
 const messagesStore = rootStores[MessagesStore];
@@ -15,15 +15,20 @@ class Inbox extends Component {
     page: 1,
     clearSelectedMessages: false
   };
-  onSelectedArrayChanged = (action, message) => {
+  onSelectedArrayChanged = (action, selectedMessage) => {
     if (action) {
       this.setState({
-        messagesSelectedArray: [...this.state.messagesSelectedArray, message]
+        messagesSelectedArray: [
+          ...this.state.messagesSelectedArray,
+          selectedMessage
+        ]
       });
     } else {
-      const fillteredArray = this.state.messagesSelectedArray.filter(m => {
-        return m.id !== message.id;
-      });
+      const fillteredArray = this.state.messagesSelectedArray.filter(
+        filteredMessage => {
+          return selectedMessage.id !== filteredMessage.id;
+        }
+      );
       this.setState({ messagesSelectedArray: fillteredArray });
     }
   };
@@ -99,10 +104,11 @@ class Inbox extends Component {
   };
 
   laodBulkMessagesByPage = () => {
+    const pageSize = 20;
     const { page } = this.state;
     let messagesBulk = [];
-    let start = (page - 1) * 20;
-    let end = page * 20;
+    let start = (page - 1) * pageSize;
+    let end = page * pageSize;
     for (
       let i = start;
       i < end && i < messagesStore.getMessagesArray.length;
@@ -129,22 +135,31 @@ class Inbox extends Component {
               <h2>{`Inbox ${unReadText}`}</h2>
             </div>
             <div className="group-btn">
-              <Button onClick={() => this.refreshPage()} className="btn-inbox">
-                <Icon type="sync" /> Refresh
-              </Button>
-              <Button
-                onClick={() => this.onVisibleClicked()}
-                className="btn-inbox"
-              >
-                {this.state.visable ? (
-                  <Icon type="eye" />
-                ) : (
-                  <Icon type="read" />
-                )}
-              </Button>
-              <Button onClick={() => this.onMarkMessagesClicked()}>
-                <Icon type="highlight" />
-              </Button>
+              <Tooltip placement="top" title={"refresh"}>
+                <Button
+                  onClick={() => this.refreshPage()}
+                  className="btn-inbox"
+                >
+                  <Icon type="sync" /> Refresh
+                </Button>
+              </Tooltip>
+              <Tooltip placement="top" title={"unread/all messages"}>
+                <Button
+                  onClick={() => this.onVisibleClicked()}
+                  className="btn-inbox"
+                >
+                  {this.state.visable ? (
+                    <Icon type="eye" />
+                  ) : (
+                    <Icon type="read" />
+                  )}
+                </Button>
+              </Tooltip>
+              <Tooltip placement="top" title="Mark messages as read">
+                <Button onClick={() => this.onMarkMessagesClicked()}>
+                  <Icon type="highlight" />
+                </Button>
+              </Tooltip>
             </div>
           </div>
         </div>
