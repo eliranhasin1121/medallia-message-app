@@ -4,7 +4,6 @@ import { Route, Switch } from "react-router-dom";
 import Home from "../Home";
 import { withRouter } from "react-router";
 import rootStores from "../../stores";
-import MessagesStore from "../../stores/MessagesStore";
 import { observer } from "mobx-react";
 import Inbox from "../Inbox";
 import MessagePage from "./MessagePage";
@@ -12,11 +11,13 @@ const { Header, Footer, Content } = Layout;
 const medalliaLogo = require("../../assets/medallia-logo.png");
 const db = require("../../db.json");
 
-const messagesStore = rootStores[MessagesStore];
-
 @observer
 class Master extends Component {
   handleMenuClicked = path => this.props.history.push(path);
+
+  onRedirectToMedalliaWebSite = () => {
+    window.open("https://www.medallia.com/");
+  };
 
   render() {
     return (
@@ -25,13 +26,13 @@ class Master extends Component {
           theme="light"
           mode="horizontal"
           defaultSelectedKeys="2"
-          className={"menu-master"}
+          className="menu-master"
         >
           <Col span={6}>
             <Menu.Item
               className="logo"
               key="1"
-              onClick={() => this.handleMenuClicked("")}
+              onClick={() => this.onRedirectToMedalliaWebSite()}
             >
               <img src={medalliaLogo} className="medallia-logo" />
             </Menu.Item>
@@ -65,7 +66,7 @@ class Master extends Component {
           </Switch>
         </Content>
         <Footer className="footer">
-          Message App ©2019 Created by Eliran Hasin.
+          Messages App ©2019 Created by Eliran Hasin.
         </Footer>
       </Layout>
     );

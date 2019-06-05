@@ -15,9 +15,7 @@
   width: 25%;
   margin: auto;
   border-radius: 7px;
-  box-shadow: "3px 2px 15px -3px";
-  zoom: 1;
-  list-style: none;
+  box-shadow: 5px 10px #888888;
 }
 .btn {
   margin: 20px 0px;

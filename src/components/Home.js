@@ -10,10 +10,6 @@ const messagesStore = rootStores[MessagesStore];
 
 @observer
 class Home extends Component {
-  componentDidMount() {
-    messagesStore.setCurrentUser(db.users[0]);
-  }
-
   onViewMessagesClicked = () => {
     this.props.history.push("/inbox");
   };
@@ -21,12 +17,12 @@ class Home extends Component {
     const user = messagesStore.getCurrentUser
       ? messagesStore.getCurrentUser
       : null;
-    const messages = user && user.messages ? user.messages : null;
+    const messages = messagesStore.getMessagesArray;
     return (
       <div className="home-main-container">
         <div className="title">
           <h2 className="title">
-            Hello {user.name}, Wellcome to Your messanger
+            Hello {user.name}, Wellcome to Your Messanger App
           </h2>
         </div>
         <div className="content">

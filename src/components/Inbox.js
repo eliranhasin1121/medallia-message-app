@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import { observer } from "mobx-react";
 import rootStores from "../stores";
 import MessagesStore from "../stores/MessagesStore";
-import { Button, Icon } from "antd";
+import { Button, Icon, Pagination, Tooltip } from "antd";
 import MessageInline from "./MessageInline";
 import get from "lodash/get";
 const messagesStore = rootStores[MessagesStore];
@@ -11,25 +11,25 @@ const db = require("../db.json");
 class Inbox extends Component {
   state = {
     messagesSelectedArray: [],
-    visable: true
+    visable: true,
+    page: 1,
+    clearSelectedMessages: false
   };
-  onSelectedArrayChanged = (action, message) => {
+  onSelectedArrayChanged = (action, selectedMessage) => {
     if (action) {
-      this.setState(
-        {
-          messagesSelectedArray: [...this.state.messagesSelectedArray, message]
-        },
-        () => {
-          console.log({ messages: this.state.messagesSelectedArray });
+      this.setState({
+        messagesSelectedArray: [
+          ...this.state.messagesSelectedArray,
+          selectedMessage
+        ]
+      });
+    } else {
+      const fillteredArray = this.state.messagesSelectedArray.filter(
+        filteredMessage => {
+          return selectedMessage.id !== filteredMessage.id;
         }
       );
-    } else {
-      const fillteredArray = this.state.messagesSelectedArray.filter(m => {
-        return m.id !== message.id;
-      });
-      this.setState({ messagesSelectedArray: fillteredArray }, () => {
-        console.log({ messages: this.state.messagesSelectedArray });
-      });
+      this.setState({ messagesSelectedArray: fillteredArray });
     }
   };
 
@@ -38,18 +38,16 @@ class Inbox extends Component {
   };
 
   fillteredMessages = () => {
+    let bulkMessages = this.laodBulkMessagesByPage();
     let filteredMessages;
     if (messagesStore.getMessagesArray) {
       if (!this.state.visable) {
-        filteredMessages = messagesStore.getMessagesArray.filter(
+        filteredMessages = bulkMessages.filter(
           message => !message.isRead && !message.deleted
         );
       } else {
-        filteredMessages = messagesStore.getMessagesArray.filter(
-          message => !message.deleted
-        );
+        filteredMessages = bulkMessages.filter(message => !message.deleted);
       }
-      console.log({ filteredMessages });
       return filteredMessages;
     } else {
       return [];
@@ -59,11 +57,22 @@ class Inbox extends Component {
     messagesStore.setMessageAsRead(message);
   };
 
+  resetSelectedValue = () => {
+    this.setState({ clearSelectedMessages: false });
+  };
+
+  setMessagesAsRead = messagesAsReadArray => {
+    messagesStore.setMessagesAsRead(messagesAsReadArray);
+    this.setState({ clearSelectedMessages: true });
+  };
+
   renderAllMessages = () => {
     {
       const messagesArray = this.fillteredMessages();
       return messagesArray.map((message, index) => (
         <MessageInline
+          changeSelectedMessageValue={() => this.resetSelectedValue()}
+          clearSelectedMessages={this.state.clearSelectedMessages}
           key={index}
           setMessageAsRead={message => this.setMessageAsRead(message)}
           message={message}
@@ -84,21 +93,40 @@ class Inbox extends Component {
     if (!this.state.messagesSelectedArray.length) {
       return;
     } else {
-      this.state.messagesSelectedArray.forEach(message => {
-        messagesStore.getMessagesArray.find(m => m.id === message.id).deleted =
-          "true";
-      });
-      this.fillteredMessages();
-      this.setState({ messagesSelectedArray: [] });
+      messagesStore.deleteMessages(this.state.messagesSelectedArray);
     }
+    this.fillteredMessages();
+    this.setState({ messagesSelectedArray: [] });
+  };
+
+  onPageChanged = page => {
+    this.setState({ page });
+  };
+
+  laodBulkMessagesByPage = () => {
+    const pageSize = 20;
+    const { page } = this.state;
+    let messagesBulk = [];
+    let start = (page - 1) * pageSize;
+    let end = page * pageSize;
+    for (
+      let i = start;
+      i < end && i < messagesStore.getMessagesArray.length;
+      i++
+    ) {
+      messagesBulk.push(messagesStore.getMessagesArray[i]);
+    }
+    return messagesBulk;
+  };
+
+  onMarkMessagesClicked = () => {
+    this.setMessagesAsRead(this.state.messagesSelectedArray);
+    this.setState({ clearSelectedMessages: true });
   };
 
   render() {
     const unReadMessages = messagesStore.getUnReadMessages;
     const unReadText = unReadMessages ? `(${unReadMessages})` : "";
-    const message = get(messagesStore.getCurrentUser, "messages[0]")
-      ? messagesStore.getCurrentUser.messages[0]
-      : null;
     return (
       <div className="main-inbox-container">
         <div className="header-mail-box">
@@ -107,37 +135,43 @@ class Inbox extends Component {
               <h2>{`Inbox ${unReadText}`}</h2>
             </div>
             <div className="group-btn">
-              <Button onClick={() => this.refreshPage()} className="btn-inbox">
-                <Icon type="sync" /> Refresh
-              </Button>
-              <Button
-                onClick={() => this.onVisibleClicked()}
-                className="btn-inbox"
-              >
-                {this.state.visable ? (
-                  <Icon type="eye" />
-                ) : (
-                  <Icon type="read" />
-                )}
-              </Button>
-              <Button
-                onClick={() => this.onDeleteClicked()}
-                className="btn-inbox"
-              >
-                <Icon type="delete" />
-              </Button>
+              <Tooltip placement="top" title={"refresh"}>
+                <Button
+                  onClick={() => this.refreshPage()}
+                  className="btn-inbox"
+                >
+                  <Icon type="sync" /> Refresh
+                </Button>
+              </Tooltip>
+              <Tooltip placement="top" title={"unread/all messages"}>
+                <Button
+                  onClick={() => this.onVisibleClicked()}
+                  className="btn-inbox"
+                >
+                  {this.state.visable ? (
+                    <Icon type="eye" />
+                  ) : (
+                    <Icon type="read" />
+                  )}
+                </Button>
+              </Tooltip>
+              <Tooltip placement="top" title="Mark messages as read">
+                <Button onClick={() => this.onMarkMessagesClicked()}>
+                  <Icon type="highlight" />
+                </Button>
+              </Tooltip>
             </div>
-          </div>
-          <div className="right-container">
-            <Button>
-              <Icon type="arrow-left" />
-            </Button>
-            <Button>
-              <Icon type="arrow-right" />
-            </Button>
           </div>
         </div>
         <div className="messages-container">{this.renderAllMessages()}</div>
+        <div className="pagination-container">
+          <Pagination
+            defaultCurrent={1}
+            total={messagesStore.getMessagesArray.length}
+            pageSize={20}
+            onChange={page => this.onPageChanged(page)}
+          />
+        </div>
       </div>
     );
   }
