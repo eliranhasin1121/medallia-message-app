@@ -4,3 +4,10 @@
 @import "./styles/Inbox.css";
 @import "./styles/MessageInline.css";
 @import "./styles/MessagePage.css";
+@media print {
+  .menu-master,
+  .footer,
+  .small-btn {
+    display: none;
+  }
+}

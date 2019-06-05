@@ -22,7 +22,7 @@ class Master extends Component {
           theme="light"
           mode="horizontal"
           defaultSelectedKeys="2"
-          className={"menu-master"}
+          className="menu-master"
         >
           <Col span={6}>
             <Menu.Item

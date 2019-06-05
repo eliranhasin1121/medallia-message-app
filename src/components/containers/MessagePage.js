@@ -12,7 +12,6 @@ class MessagePage extends Component {
   };
 
   onOpenNewTabWithMessage = () => {
-    console.log("here!!!");
     window.open(`http://localhost:3000/message/${this.props.match.params.id}`);
   };
   render() {
@@ -40,7 +39,10 @@ class MessagePage extends Component {
             >
               <Icon type="printer" />
             </Button>
-            <Button onClick={() => this.onOpenNewTabWithMessage()}>
+            <Button
+              onClick={() => this.onOpenNewTabWithMessage()}
+              className="small-btn"
+            >
               <Icon type="switcher" />
             </Button>
           </div>
