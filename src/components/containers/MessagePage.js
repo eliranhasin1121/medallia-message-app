@@ -3,12 +3,18 @@ import { observer } from "mobx-react";
 import rootStores from "../../stores";
 import MessagesStore from "../../stores/MessagesStore";
 import { Icon, Button } from "antd";
-const db = require("../../db.json");
 
 const messageStore = rootStores[MessagesStore];
 @observer
 class MessagePage extends Component {
-  state = {};
+  onPrintMessageClick = () => {
+    window.print();
+  };
+
+  onOpenNewTabWithMessage = () => {
+    console.log("here!!!");
+    window.open(`http://localhost:3000/message/${this.props.match.params.id}`);
+  };
   render() {
     const id = this.props.match.params.id;
     const message = messageStore.getMessagesArray
@@ -28,10 +34,13 @@ class MessagePage extends Component {
             <span className="small-text">to me</span>
           </div>
           <div className="element-container">
-            <Button className="small-btn">
+            <Button
+              onClick={() => this.onPrintMessageClick()}
+              className="small-btn"
+            >
               <Icon type="printer" />
             </Button>
-            <Button>
+            <Button onClick={() => this.onOpenNewTabWithMessage()}>
               <Icon type="switcher" />
             </Button>
           </div>
