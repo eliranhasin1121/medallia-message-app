@@ -66,7 +66,7 @@ class Master extends Component {
           </Switch>
         </Content>
         <Footer className="footer">
-          Message App ©2019 Created by Eliran Hasin.
+          Messages App ©2019 Created by Eliran Hasin.
         </Footer>
       </Layout>
     );

@@ -5,6 +5,7 @@ import MessagesStore from "../../stores/MessagesStore";
 import { Icon, Button, Tooltip } from "antd";
 
 const messageStore = rootStores[MessagesStore];
+
 @observer
 class MessagePage extends Component {
   onPrintMessageClick = () => {
