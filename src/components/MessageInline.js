@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Checkbox } from "antd";
+import { Checkbox, Tooltip } from "antd";
 import MessagesStore from "../stores/MessagesStore";
 
 export default class MessageInline extends Component {
@@ -66,9 +66,14 @@ export default class MessageInline extends Component {
             </div>
             <div className="message-content">
               <div className="message-container-overflow">
-                <span className="content-text">
-                  {message ? message.content : ""}
-                </span>
+                <Tooltip
+                  placement="left"
+                  title={message ? message.content : ""}
+                >
+                  <span className="content-text">
+                    {message ? message.content : ""}
+                  </span>
+                </Tooltip>
               </div>
             </div>
             <div className="date-container">
