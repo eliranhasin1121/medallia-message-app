@@ -15,6 +15,10 @@ const db = require("../../db.json");
 class Master extends Component {
   handleMenuClicked = path => this.props.history.push(path);
 
+  onRedirectToMedalliaWebSite = () => {
+    window.open("https://www.medallia.com/");
+  };
+
   render() {
     return (
       <Layout className="layout">
@@ -28,7 +32,7 @@ class Master extends Component {
             <Menu.Item
               className="logo"
               key="1"
-              onClick={() => this.handleMenuClicked("/home")}
+              onClick={() => this.onRedirectToMedalliaWebSite()}
             >
               <img src={medalliaLogo} className="medallia-logo" />
             </Menu.Item>

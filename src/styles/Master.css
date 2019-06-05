@@ -1,5 +1,6 @@
 .medallia-logo {
   width: 120px;
+  cursor: pointer;
 }
 .tab {
   font-size: 16px;
