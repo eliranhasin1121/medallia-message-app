@@ -15,15 +15,20 @@ class Inbox extends Component {
     page: 1,
     clearSelectedMessages: false
   };
-  onSelectedArrayChanged = (action, message) => {
+  onSelectedArrayChanged = (action, selectedMessage) => {
     if (action) {
       this.setState({
-        messagesSelectedArray: [...this.state.messagesSelectedArray, message]
+        messagesSelectedArray: [
+          ...this.state.messagesSelectedArray,
+          selectedMessage
+        ]
       });
     } else {
-      const fillteredArray = this.state.messagesSelectedArray.filter(m => {
-        return m.id !== message.id;
-      });
+      const fillteredArray = this.state.messagesSelectedArray.filter(
+        filteredMessage => {
+          return selectedMessage.id !== filteredMessage.id;
+        }
+      );
       this.setState({ messagesSelectedArray: fillteredArray });
     }
   };
@@ -99,10 +104,11 @@ class Inbox extends Component {
   };
 
   laodBulkMessagesByPage = () => {
+    const pageSize = 20;
     const { page } = this.state;
     let messagesBulk = [];
-    let start = (page - 1) * 20;
-    let end = page * 20;
+    let start = (page - 1) * pageSize;
+    let end = page * pageSize;
     for (
       let i = start;
       i < end && i < messagesStore.getMessagesArray.length;

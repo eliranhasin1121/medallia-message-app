@@ -22,7 +22,7 @@ class Home extends Component {
       <div className="home-main-container">
         <div className="title">
           <h2 className="title">
-            Hello {user.name}, Wellcome to Your messanger
+            Hello {user.name}, Wellcome to Your Messanger App
           </h2>
         </div>
         <div className="content">
