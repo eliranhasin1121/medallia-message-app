@@ -19,11 +19,15 @@
 .content-message-container {
   width: 35%;
   margin: auto;
-  border: 1px solid;
+  border: 1px solid blue;
+
   padding: 10px;
   box-shadow: 5px 10px #888888;
   margin-top: 35px;
 }
 .text-container {
-  padding-top: 20px;
+  padding: 20px;
+}
+.content-text-message {
+  font-size: 18px;
 }
