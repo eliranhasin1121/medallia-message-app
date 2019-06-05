@@ -4,15 +4,12 @@ import { Route, Switch } from "react-router-dom";
 import Home from "../Home";
 import { withRouter } from "react-router";
 import rootStores from "../../stores";
-import MessagesStore from "../../stores/MessagesStore";
 import { observer } from "mobx-react";
 import Inbox from "../Inbox";
 import MessagePage from "./MessagePage";
 const { Header, Footer, Content } = Layout;
 const medalliaLogo = require("../../assets/medallia-logo.png");
 const db = require("../../db.json");
-
-const messagesStore = rootStores[MessagesStore];
 
 @observer
 class Master extends Component {
@@ -31,7 +28,7 @@ class Master extends Component {
             <Menu.Item
               className="logo"
               key="1"
-              onClick={() => this.handleMenuClicked("")}
+              onClick={() => this.handleMenuClicked("/home")}
             >
               <img src={medalliaLogo} className="medallia-logo" />
             </Menu.Item>
