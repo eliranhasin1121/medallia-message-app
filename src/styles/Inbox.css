@@ -19,3 +19,7 @@
 .messages-container {
   border: 0.5px solid;
 }
+.pagination-container {
+  text-align: center;
+  padding-top: 15px;
+}

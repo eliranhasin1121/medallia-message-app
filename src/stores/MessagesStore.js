@@ -24,25 +24,6 @@ export default class MessagesStore {
   @observable
   messagesArray = observable([]);
 
-  // @action
-  // deleteMessages = messagesToDelete => {
-  //   let unReadMessageAreDeleted = 0;
-  //   this.messagesArray.forEach(message => {
-  //     console.log(message);
-  //     if (!message.isRead) {
-  //       unReadMessageAreDeleted += 1;
-  //       console.log({ unReadMessageAreDeleted });
-  //       debugger;
-  //     }
-  //     this.getMessagesArray.find(m => {
-  //       const found = m.id === message.id.deleted;
-  //       if (found) {
-  //         found.deleted = "true";
-  //       }
-  //     });
-  //   });
-  //   this.setUnReadMessages(this.getUnReadMessages - unReadMessageAreDeleted);
-  // };
   @action
   deleteMessages = messagesToDelete => {
     let unReadMessages = 0;
@@ -68,6 +49,7 @@ export default class MessagesStore {
     });
     this.setMessageArray(unDeletedMessagesArray);
     this.setUnReadMessages(this.getUnReadMessages - unReadMessages);
+    return true;
   };
   @action
   setCurrentUser = user => {

@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import { observer } from "mobx-react";
 import rootStores from "../stores";
 import MessagesStore from "../stores/MessagesStore";
-import { Button, Icon } from "antd";
+import { Button, Icon, Pagination } from "antd";
 import MessageInline from "./MessageInline";
 import get from "lodash/get";
 const messagesStore = rootStores[MessagesStore];
@@ -11,7 +11,8 @@ const db = require("../db.json");
 class Inbox extends Component {
   state = {
     messagesSelectedArray: [],
-    visable: true
+    visable: true,
+    page: 1
   };
   onSelectedArrayChanged = (action, message) => {
     if (action) {
@@ -33,18 +34,16 @@ class Inbox extends Component {
   };
 
   fillteredMessages = () => {
+    let bulkMessages = this.laodBulkMessagesByPage();
     let filteredMessages;
     if (messagesStore.getMessagesArray) {
       if (!this.state.visable) {
-        filteredMessages = messagesStore.getMessagesArray.filter(
+        filteredMessages = bulkMessages.filter(
           message => !message.isRead && !message.deleted
         );
       } else {
-        filteredMessages = messagesStore.getMessagesArray.filter(
-          message => !message.deleted
-        );
+        filteredMessages = bulkMessages.filter(message => !message.deleted);
       }
-      console.log({ filteredMessages });
       return filteredMessages;
     } else {
       return [];
@@ -85,6 +84,25 @@ class Inbox extends Component {
     this.setState({ messagesSelectedArray: [] });
   };
 
+  onPageChanged = page => {
+    this.setState({ page });
+  };
+
+  laodBulkMessagesByPage = () => {
+    const { page } = this.state;
+    let messagesBulk = [];
+    let start = (page - 1) * 20;
+    let end = page * 20;
+    for (
+      let i = start;
+      i < end && i < messagesStore.getMessagesArray.length;
+      i++
+    ) {
+      messagesBulk.push(messagesStore.getMessagesArray[i]);
+    }
+    return messagesBulk;
+  };
+
   render() {
     const unReadMessages = messagesStore.getUnReadMessages;
     const unReadText = unReadMessages ? `(${unReadMessages})` : "";
@@ -117,16 +135,16 @@ class Inbox extends Component {
               </Button>
             </div>
           </div>
-          <div className="right-container">
-            <Button>
-              <Icon type="arrow-left" />
-            </Button>
-            <Button>
-              <Icon type="arrow-right" />
-            </Button>
-          </div>
         </div>
         <div className="messages-container">{this.renderAllMessages()}</div>
+        <div className="pagination-container">
+          <Pagination
+            defaultCurrent={1}
+            total={messagesStore.getMessagesArray.length}
+            pageSize={20}
+            onChange={page => this.onPageChanged(page)}
+          />
+        </div>
       </div>
     );
   }
