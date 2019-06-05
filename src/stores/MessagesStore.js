@@ -1,5 +1,6 @@
 import { observable, action, computed, toJS } from "mobx";
 import get from "lodash/get";
+import { array } from "prop-types";
 
 const db = require("../db.json");
 
@@ -24,49 +25,48 @@ export default class MessagesStore {
   @observable
   messagesArray = observable([]);
 
-  // @action
-  // deleteMessages = messagesToDelete => {
-  //   let unReadMessageAreDeleted = 0;
-  //   this.messagesArray.forEach(message => {
-  //     console.log(message);
-  //     if (!message.isRead) {
-  //       unReadMessageAreDeleted += 1;
-  //       console.log({ unReadMessageAreDeleted });
-  //       debugger;
-  //     }
-  //     this.getMessagesArray.find(m => {
-  //       const found = m.id === message.id.deleted;
-  //       if (found) {
-  //         found.deleted = "true";
-  //       }
-  //     });
-  //   });
-  //   this.setUnReadMessages(this.getUnReadMessages - unReadMessageAreDeleted);
-  // };
   @action
   deleteMessages = messagesToDelete => {
     let unReadMessages = 0;
     let unDeletedMessagesArray = [];
+    this.getMessagesArray.forEach(message => {
+      if (!messagesToDelete.includes(message)) {
+        unDeletedMessagesArray.push(message);
+      }
+    });
     messagesToDelete.forEach(messageToDelete => {
       if (!messageToDelete.isRead) {
-        debugger;
         unReadMessages += 1;
       }
-      this.getMessagesArray.forEach(message => {
-        if (
-          message.id != messageToDelete.id &&
-          !unDeletedMessagesArray.includes(message)
-        ) {
-          unDeletedMessagesArray.push(message);
-        } else if (
-          message.id === messageToDelete.id &&
-          !unDeletedMessagesArray.includes(message)
-        ) {
-          message.deleted = true;
-        }
-      });
     });
     this.setMessageArray(unDeletedMessagesArray);
+
+    // messagesToDelete.forEach(messageToDelete => {
+    //   if (!messageToDelete.isRead) {
+    //     unReadMessages += 1;
+    //   }
+    // if (this.getMessagesArray.includes(messageToDelete)) {
+    //   this.getMessagesArray.remove(messageToDelete);
+    // }
+    // let index = this.getMessagesArray.indexOf(messagesToDelete);
+    // if (index > -1) {
+    //   this.getMessagesArray.splice(index, 1);
+    // }
+    //   this.getMessagesArray.forEach(message => {
+    //     if (
+    //       message.id != messageToDelete.id &&
+    //       !unDeletedMessagesArray.includes(message)
+    //     ) {
+    //       unDeletedMessagesArray.push(message);
+    //     } else if (
+    //       message.id === messageToDelete.id &&
+    //       !unDeletedMessagesArray.includes(message)
+    //     ) {
+    //       message.deleted = true;
+    //     }
+    //   });
+    // });
+    // this.setMessageArray(unDeletedMessagesArray);
     this.setUnReadMessages(this.getUnReadMessages - unReadMessages);
   };
   @action
@@ -88,11 +88,17 @@ export default class MessagesStore {
   @action
   setMessageAsRead = message => {
     const found = this.getMessagesArray.find(m => m.id === message.id);
-    console.log(found);
-    if (found) {
+    if (found && !found.isRead) {
       found.isRead = true;
       this.setUnReadMessages(this.getUnReadMessages - 1);
     }
+  };
+
+  @action
+  setMessagesAsRead = messagesAsReadArray => {
+    messagesAsReadArray.forEach(message => {
+      this.setMessageAsRead(message);
+    });
   };
   @computed
   get getMessagesArray() {

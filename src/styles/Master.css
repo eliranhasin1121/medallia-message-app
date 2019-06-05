@@ -1,5 +1,6 @@
 .medallia-logo {
   width: 120px;
+  cursor: pointer;
 }
 .tab {
   font-size: 16px;
@@ -9,7 +10,7 @@
 
 .tab-container {
   text-align: center;
-  margin-left: 200px;
+  margin-left: 300px;
   margin-top: 25px;
 }
 .tab-container :hover {
@@ -17,7 +18,8 @@
 }
 .content-container {
   padding: 0px 50px;
-  background-color: "#fcfcfc";
+  background-color: #fcfcfc;
+  height: 1300px;
 }
 .footer {
   bottom: 0;
